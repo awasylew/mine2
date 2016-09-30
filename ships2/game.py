@@ -88,12 +88,13 @@ class Field(object):
         return list(self.field.values()).count( 'Fe' ) + list(self.field.values()).count( 'FM' )
         
 
-class Game(object):  #zbyt krótka nazwa? ShipsGame ShipsPlay GameOfShips
+class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
     """
     Obiekt utrzymujacy stan pojedynczej rozgrywki i wykonujacy dzialania w czasie rozgrywki.
     Gra rozpoczyna sie od wszystkich zakrytych pol. Na niektorych polach znajduja siê miny. Pola mozna odkrywac lub flagowac.
     Gra toczy sie do momentu oznaczenia wszystkich min i odkrycia pozostalych pol lub do wejscia na mine.
     """
+    
     def __init__(self):  # brakuje parametryzacji (trudnoœæ albo wielkoœæ pola i liczba min)
         """
         Rozpoczyna now¹ rozgrywkê od wszystkich zakrytych pól i roz³o¿onych min.
