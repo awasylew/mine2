@@ -133,7 +133,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
 #            return
         else:
             self.field.step( (x,y) )
-        self.display()
+#        self.display()
 
     def flag(self,x,y):    #zbyt kr�tka nazwa? zbyt niejednoznaczna?
         """
@@ -141,7 +141,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         Je�li gra jest zako�czona, metoda nie ma skutk�w.    --- nie dzia�a tak obecnie, potrzebne?
         """
         self.field.flag( (x,y) )
-        self.display()
+#        self.display()
         
     def minesLeft(self):    #nazwa nieprecyzyjna  getNumMinesLeft?
         """
