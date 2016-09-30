@@ -122,6 +122,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         Je�li mo�na ods�oni� s�siednie pola, s� one r�wnie� ods�aniane - rekurencyjnie.
         Je�li gra jest zako�czona, metoda nie ma skutk�w.
         """
+        
         if self.status=='game over':
             print('game over, not stepping in')
             return
