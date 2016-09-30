@@ -1,0 +1,90 @@
+.cell  { 
+	background-color: #b0b0b0;
+	width:60;
+	height:60;
+	text-align:center;
+	margin:5;
+	border-left: medium solid;
+	border-top: medium solid;
+	border-right: medium solid;
+	border-bottom: medium solid;
+}
+
+.elevated {
+	background-color: #a0a0a0;
+	border-left: medium solid #e0e0e0;
+	border-top: medium solid #e0e0e0;
+	border-right: medium solid #909090;
+	border-bottom: medium solid #909090;
+}
+
+.boom {
+	background-color: red;
+}
+
+.child {
+	vertical-align: middle;
+}
+
+.actions {
+	margin: 0;
+	border: 0;
+	padding: 0;
+	opacity: 0.05;
+}
+
+.actionsV {
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+
+.stopy:hover {
+    background-image: url('/static/stopy.png');
+    background-repeat: no-repeat;
+    opacity: 1;
+}
+
+.flaga:hover {
+    background-image: url('/static/flaga.png');
+    background-repeat: no-repeat;
+    opacity: 1;
+}
+
+.minecount1 {
+	color: blue;
+}
+
+.minecount2 {
+	color: green;
+}		
+
+.minecount3 {
+	color: red;
+}
+
+.minecount4 {
+	color: #000066;
+}
+
+.minecount5 {
+	color: #990000;
+}
+
+.minecount6 {
+	color: #00cc99;
+}
+
+.minecount7 {
+	color: black;
+}
+
+.minecount8 {
+	color: #666666;
+}
+
+.minecount1, .minecount2, .minecount3, .minecount4, .minecount5, .minecount6, .minecount7, .minecount8 {
+	font-size: 250%;
+	font-family: courier;
+	font-weight: 900;
+}

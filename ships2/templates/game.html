@@ -1,0 +1,57 @@
+<html>
+
+<head>
+	<title>Minesweeper</title>
+	<link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='style.css')}}'>
+</head>
+
+<body>
+
+<div><a href='/new_game'>Start new game</a></div>
+
+<div>status: {{ game.status }} </div>
+
+<div>mines left: {{ game.minesLeft() }} </div>
+
+{% set status = game.status %}
+
+<table>
+{% for y in range(game.field.height) %}
+
+	<tr>
+	{% for x in range(game.field.width) %}
+	
+		{% set f = game.field.field[ x,y ] %}   
+		<td class='cell{% if f in ['e', 'M', 'Fe', 'FM']%} elevated{% endif %}{% if f =='B' %} boom{% endif %}'>
+
+			{% if status == 'game over' and f in ['M', 'FM', 'B'] %}
+				<img class='' src='{{ url_for('static', filename='mina.png') }}'/>
+			{% endif %}
+
+			{% if status == 'ready' and f in ['e', 'M'] %}
+				<a href='/flag/{{ x }}/{{ y }}'><img class='actions flaga' src='{{ url_for('static', filename='flaga.png') }}'/></a>
+			{% endif %}
+
+			{%if f in ['1', '2', '3', '4', '5', '6', '7', '8', '9'] %}
+				<p class='minecount{{ f }}'>{{ f }}</p>
+			{% endif %}
+
+			{% if status == 'ready' and f in ['Fe', 'FM'] %}
+				<a href='/flag/{{ x }}/{{ y }}'><img class='actionV' src='{{ url_for('static', filename='flaga.png') }}'/></a>
+			{% endif %}
+
+			{% if status == 'ready' and f in ['e', 'M'] %}
+				<a href='/step/{{ x }}/{{ y }}'><img class='actions stopy' src='{{ url_for('static', filename='stopy.png') }}'/></a>
+			{% endif %}
+
+		</td>
+	{% endfor %}
+	</tr>
+{% endfor %}
+</table>
+
+<div><a href='/quit_server'>Quit server</a></div>
+
+</body>
+</html>
+
