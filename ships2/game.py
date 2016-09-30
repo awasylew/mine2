@@ -90,9 +90,9 @@ class Field(object):
 
 class Game(object):  #zbyt krótka nazwa? ShipsGame ShipsPlay GameOfShips
     """
-    Obiekt utrzymuj¹cy stan pojedynczej rozgrywki i wykonuj¹cy dzia³ania w czasie rozgrywki.
-    Gra rozpoczyna siê od wszystkich zakrytych pól. Na niektórych polach znajduj¹ siê miny. Pola mo¿na odkrywaæ lub flagowaæ.
-    Gra toczy siê do momentu oznaczenia wszystkich min i odkrycia pozosta³ych pól lub do wejœcia na minê.
+    Obiekt utrzymujacy stan pojedynczej rozgrywki i wykonujacy dzialania w czasie rozgrywki.
+    Gra rozpoczyna sie od wszystkich zakrytych pol. Na niektorych polach znajduja siê miny. Pola mozna odkrywac lub flagowac.
+    Gra toczy sie do momentu oznaczenia wszystkich min i odkrycia pozostalych pol lub do wejscia na mine.
     """
     def __init__(self):  # brakuje parametryzacji (trudnoœæ albo wielkoœæ pola i liczba min)
         """
