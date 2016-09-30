@@ -1,4 +1,4 @@
-import random
+ï»¿import random
 
 class Field(object):
     
@@ -91,19 +91,19 @@ class Field(object):
 class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
     """
     Obiekt utrzymujacy stan pojedynczej rozgrywki i wykonujacy dzialania w czasie rozgrywki.
-    Gra rozpoczyna sie od wszystkich zakrytych pol. Na niektorych polach znajduja siê miny. Pola mozna odkrywac lub flagowac.
+    Gra rozpoczyna sie od wszystkich zakrytych pol. Na niektorych polach znajduja sie miny. Pola mozna odkrywac lub flagowac.
     Gra toczy sie do momentu oznaczenia wszystkich min i odkrycia pozostalych pol lub do wejscia na mine.
     """
     
-    def __init__(self):  # brakuje parametryzacji (trudnoœæ albo wielkoœæ pola i liczba min)
+    def __init__(self):  # brakuje parametryzacji (trudnoï¿½ï¿½ albo wielkoï¿½ï¿½ pola i liczba min)
         """
-        Rozpoczyna now¹ rozgrywkê od wszystkich zakrytych pól i roz³o¿onych min.
+        Rozpoczyna nowï¿½ rozgrywkï¿½ od wszystkich zakrytych pï¿½l i rozï¿½oï¿½onych min.
         """
         self.field = Field(10,10)
-        self.field.empty() # to pewnie powinno byæ czêœci¹ konstruktora
-        self.totalMines = 10 # to mo¿e te¿ powinien byæ konstruktor
-        self.field.layMines(self.totalMines) # mo¿e to te¿ powinien byæ konstruktor
-        self.status = 'ready'  # mo¿e jakiœ getter? mo¿e ENUM?
+        self.field.empty() # to pewnie powinno byï¿½ czï¿½ciï¿½ konstruktora
+        self.totalMines = 10 # to moï¿½e teï¿½ powinien byï¿½ konstruktor
+        self.field.layMines(self.totalMines) # moï¿½e to teï¿½ powinien byï¿½ konstruktor
+        self.status = 'ready'  # moï¿½e jakiï¿½ getter? moï¿½e ENUM?
 
     """
     metoda zbyt specyficzna czy diagnostyczna?
@@ -114,13 +114,13 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         self.field.display()
     """
     
-    def step(self,x,y):  #zbyt krótka nazwa? zbyt niedok³adna? zbyt niejednoznaczna?
+    def step(self,x,y):  #zbyt krï¿½tka nazwa? zbyt niedokï¿½adna? zbyt niejednoznaczna?
         """
-        Ods³ania pole jak przy wst¹pieniu na nie.
-        Jeœli na polu znajduje siê mina, gra siê koñczy przegran¹.
-        Jeœli ods³oniêto wszystko... gra siê koñczy wygran¹.  --- dorobiæ
-        Jeœli mo¿na ods³oniæ s¹siednie pola, s¹ one równie¿ ods³aniane - rekurencyjnie.
-        Jeœli gra jest zakoñczona, metoda nie ma skutków.
+        Odsï¿½ania pole jak przy wstï¿½pieniu na nie.
+        Jeï¿½li na polu znajduje siï¿½ mina, gra siï¿½ koï¿½czy przegranï¿½.
+        Jeï¿½li odsï¿½oniï¿½to wszystko... gra siï¿½ koï¿½czy wygranï¿½.  --- dorobiï¿½
+        Jeï¿½li moï¿½na odsï¿½oniï¿½ sï¿½siednie pola, sï¿½ one rï¿½wnieï¿½ odsï¿½aniane - rekurencyjnie.
+        Jeï¿½li gra jest zakoï¿½czona, metoda nie ma skutkï¿½w.
         """
         if self.status=='game over':
             print('game over, not stepping in')
@@ -135,19 +135,19 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
             self.field.step( (x,y) )
         self.display()
 
-    def flag(self,x,y):    #zbyt krótka nazwa? zbyt niejednoznaczna?
+    def flag(self,x,y):    #zbyt krï¿½tka nazwa? zbyt niejednoznaczna?
         """
-        Zmienia stan oznaczenia pola flag¹ na przeciwny.
-        Jeœli gra jest zakoñczona, metoda nie ma skutków.    --- nie dzia³a tak obecnie, potrzebne?
+        Zmienia stan oznaczenia pola flagï¿½ na przeciwny.
+        Jeï¿½li gra jest zakoï¿½czona, metoda nie ma skutkï¿½w.    --- nie dziaï¿½a tak obecnie, potrzebne?
         """
         self.field.flag( (x,y) )
         self.display()
         
     def minesLeft(self):    #nazwa nieprecyzyjna  getNumMinesLeft?
         """
-        Pobiera liczbê nieoznaczonych min - wynikaj¹c¹ z wype³nienia planszy i oznaczeñ flagami. 
+        Pobiera liczbï¿½ nieoznaczonych min - wynikajï¿½cï¿½ z wypeï¿½nienia planszy i oznaczeï¿½ flagami. 
         Nie bada dopasowania flag do min.
-        Jeœli flag jest wiêcej ni¿ min, zwraca zero. 
+        Jeï¿½li flag jest wiï¿½cej niï¿½ min, zwraca zero. 
         """
         fl = self.field.numFlags()
         return max( self.totalMines - fl, 0 )
