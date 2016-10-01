@@ -27,7 +27,8 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
     # brakuje gettera do statusu
     # ENUMy zamiast tekstow?
     
-    def __init__(self, setWidth=10, setHeight=10, setMines=15):
+#    def __init__(self, setWidth=10, setHeight=10, setMines=15):
+    def __init__(self, setWidth=6, setHeight=6, setMines=5):
         """
         Rozpoczyna nowa rozgrywke od wszystkich zakrytych pol i rozlozonych min.
         """
@@ -108,6 +109,15 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
                         if self.field[xy1] in ['e', 'Fe']:
                             self.field[xy1] = str(self.numNeighbourMines(xy1))
         
+    def checkSuccess(self):
+        """
+        Funkcja sprawdza czy spelniony jest warunek zwyciestwa i ew. ustawia status.
+        """ 
+        if list(self.field.values()).count( 'Fe' ) == 0 and \
+           list(self.field.values()).count( 'e' ) == 0 and \
+           list(self.field.values()).count( 'M' ) == 0:
+            self.status = 'success'
+    
     def moveOnField(self,x,y):  #zbyt krotka nazwa? zbyt niedokladna? zbyt niejednoznaczna?
         """
         Odslania pole przy wstapieniu na nie.
@@ -122,10 +132,12 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
             self.layMines( x, y )
         if self.field[xy] == 'M':
             self.field[xy] = 'B'
-            self.status = 'fail'   # fail
+            self.status = 'fail'   
         else:
             self.field[xy] = str(self.numNeighbourMines(xy))
             self.exploreSafeFields()
+        print(list(self.field.values()).count( 'Fe' ) , list(self.field.values()).count( 'e' ) )
+        self.checkSuccess()
 
     def toggleCellFlag(self,x,y):    
         """
@@ -137,6 +149,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
             self.field[xy] = self.field[xy][1:]
         else:
             self.field[xy] = 'F' + self.field[xy]
+        self.checkSuccess()
         
     def getMinesLeft(self):
         """
