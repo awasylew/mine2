@@ -95,15 +95,15 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
     Gra toczy sie do momentu oznaczenia wszystkich min i odkrycia pozostalych pol lub do wejscia na mine.
     """
     
-    def __init__(self):  # brakuje parametryzacji (trudno�� albo wielko�� pola i liczba min)
+    def __init__(self):  # brakuje parametryzacji (trudnosc albo wielkosc pola i liczba min)
         """
-        Rozpoczyna now� rozgrywk� od wszystkich zakrytych p�l i roz�o�onych min.
+        Rozpoczyna nowa rozgrywke od wszystkich zakrytych pol i rozlozonych min.
         """
         self.field = Field(10,10)
-        self.field.empty() # to pewnie powinno by� cz�ci� konstruktora
-        self.totalMines = 10 # to mo�e te� powinien by� konstruktor
-        self.field.layMines(self.totalMines) # mo�e to te� powinien by� konstruktor
-        self.status = 'ready'  # mo�e jaki� getter? mo�e ENUM?
+        self.field.empty() # to pewnie powinno byc czesc konstruktora
+        self.totalMines = 10 # to moze tez powinien byc konstruktor
+        self.field.layMines(self.totalMines) # moze to tez powinien byc konstruktor
+        self.status = 'ready'  # moze jakis getter? moze ENUM?
 
     """
     metoda zbyt specyficzna czy diagnostyczna?
@@ -116,11 +116,11 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
     
     def step(self,x,y):  #zbyt kr�tka nazwa? zbyt niedok�adna? zbyt niejednoznaczna?
         """
-        Ods�ania pole jak przy wst�pieniu na nie.
-        Je�li na polu znajduje si� mina, gra si� ko�czy przegran�.
-        Je�li ods�oni�to wszystko... gra si� ko�czy wygran�.  --- dorobi�
-        Je�li mo�na ods�oni� s�siednie pola, s� one r�wnie� ods�aniane - rekurencyjnie.
-        Je�li gra jest zako�czona, metoda nie ma skutk�w.
+        Odslania pole jak przy wstapieniu na nie.
+        Jesli na polu znajduje sie mina, gra sie konczy przegrana.
+        Jesli odslonieto wszystko... gra sie konczy wygrana.  --- dorobic
+        Jesli mozna odslonic sasiednie pola, sa one rowwniez odslaniane - rekurencyjnie.
+        Jesli gra jest zakonczona, metoda nie ma skutkow.
         """
         
         if self.status=='game over':
@@ -136,19 +136,19 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
             self.field.step( (x,y) )
 #        self.display()
 
-    def flag(self,x,y):    #zbyt kr�tka nazwa? zbyt niejednoznaczna?
+    def flag(self,x,y):    #zbyt krotka nazwa? zbyt niejednoznaczna?
         """
-        Zmienia stan oznaczenia pola flag� na przeciwny.
-        Je�li gra jest zako�czona, metoda nie ma skutk�w.    --- nie dzia�a tak obecnie, potrzebne?
+        Zmienia stan oznaczenia pola flaga na przeciwny.
+        Jeeli gra jest zakonczona, metoda nie ma skutkow.    --- nie dziala tak obecnie, potrzebne?
         """
         self.field.flag( (x,y) )
 #        self.display()
         
     def minesLeft(self):    #nazwa nieprecyzyjna  getNumMinesLeft?
         """
-        Pobiera liczb� nieoznaczonych min - wynikaj�c� z wype�nienia planszy i oznacze� flagami. 
+        Pobiera liczbe nieoznaczonych min - wynikajaca z wypelnienia planszy i oznaczen flagami. 
         Nie bada dopasowania flag do min.
-        Je�li flag jest wi�cej ni� min, zwraca zero. 
+        Jeeli flag jest wiecej niz min, zwraca zero. 
         """
         fl = self.field.numFlags()
         return max( self.totalMines - fl, 0 )
