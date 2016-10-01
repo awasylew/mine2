@@ -26,7 +26,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
     # brakuje statusow oznaczajacych koniec gry sukcesem/porazka
     # brakuje gettera do statusu
     
-    def __init__(self, setWidth=10, setHeight=10, setMines=15):  # brakuje parametryzacji (trudnosc albo wielkosc pola i liczba min)
+    def __init__(self, setWidth=10, setHeight=10, setMines=15):
         """
         Rozpoczyna nowa rozgrywke od wszystkich zakrytych pol i rozlozonych min.
         """
@@ -34,8 +34,12 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         self.height = setHeight
         self.totalMines = setMines 
         self.status = 'ready'  
+        self.clearField()
         
-    def Xcells(self):
+    def allCells(self):
+        """
+        Funkcja pomocnicza - generuje oniesienia do wszystkich elementow planszy
+        """
         for x in range(self.height):
             for y in range(self.width):
                 yield x,y
@@ -45,7 +49,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         Poczatkowe wypelnienie wszystkich pol na pusto.
         """
         self.field = dict()
-        for xy in self.Xcells():
+        for xy in self.allCells():
                 self.field[xy] = 'e'
         
     """
@@ -68,22 +72,27 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         self.show( lambda x: '*' if x in ['e', 'M'] else 'F' if x[0]=='F' else x )
     """
         
-    def XlayMines(self, numMines, startX=None, startY=None):
-        for m in range(numMines):
+    def layMines(self, startX=None, startY=None):
+        """
+        Rozklada miny na planszy unikajac wskazanego pola.
+        """
+        for m in range(self.totalMines):
             while True:
                 xy = int(random.random()*self.width), int(random.random()*self.height)
-                print(m, xy, self.field[xy])
                 if xy == (startX, startY):
                     continue
                 if self.field[xy] in ['M', 'FM']:
                     continue
-                if self.field[xy] == 'e':
-                    self.field[xy] = 'M'
-                else:
-                    self.field[xy] = 'FM' 
                 break
+            if self.field[xy] == 'e':
+                self.field[xy] = 'M'
+            else:
+                self.field[xy] = 'FM' 
 
-    def Xneighbours(self,xy):
+    def neighbourCells(self,xy):
+        """
+        Generuje wspolrzedne wszystkich pol otaczajacych dane pole - sprawdzajac czy nie wychodza poza plansze.
+        """
         for dx in [-1,0,1]:
             for dy in [-1,0,1]:
                 if dx==0 and dy==0:
@@ -92,9 +101,12 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
                 if 0 <= x1 <= self.width-1 and 0 <= y1 <= self.height-1:
                     yield x1,y1
         
-    def XminesAround(self,xy):
+    def numNeighbourMines(self,xy):
+        """
+        Funkcja wyznacza liczbe min na planszy dookola danego pola.
+        """
         count = 0
-        for xy1 in self.Xneighbours(xy):
+        for xy1 in self.neighbourCells(xy):
             if self.field[xy1] in ['M', 'FM']:
                 count += 1 
         return count
@@ -103,40 +115,21 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         again=True
         while again:
             again=False
-            for xy in self.Xcells():
+            for xy in self.allCells():
                 if self.field[xy] == '0':
                     again=True
                     self.field[xy] = '.'
-                    for xy1 in self.Xneighbours(xy):
+                    for xy1 in self.neighbourCells(xy):
                         if self.field[xy1] == 'e':
-                            self.field[xy1] = str(self.XminesAround(xy1))
+                            self.field[xy1] = str(self.numNeighbourMines(xy1))
         
     def Xstep(self,xy):
         if self.field[xy] == 'M':
 #            self.field[xy] = 'B'
             return
-        self.field[xy] = str(self.XminesAround(xy))
+        self.field[xy] = str(self.numNeighbourMines(xy))
         self.Xexpose()
         
-    def Xflag(self,xy):
-        if self.field[xy][0] == 'F':
-            self.field[xy] = self.field[xy][1:]
-        else:
-            self.field[xy] = 'F' + self.field[xy]
-            
-    def XnumFlags(self):
-        return list(self.field.values()).count( 'Fe' ) + list(self.field.values()).count( 'FM' )
-        
-
-    """
-    metoda zbyt specyficzna czy diagnostyczna?
-    def display(self):
-        print( 'status: ', self.status )
-        print( 'mines left: ', self.minesLeft )
-        self.field.reveal()
-        self.field.display()
-    """
-    
     def step(self,x,y):  #zbyt kr�tka nazwa? zbyt niedok�adna? zbyt niejednoznaczna?
         """
         Odslania pole jak przy wstapieniu na nie.
@@ -151,7 +144,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
             return
         if self.status == 'ready':
             self.status = 'started'
-            self.XlayMines( self.totalMines, x, y )
+            self.layMines( x, y )
         if self.field[ (x,y) ] == 'M':
 #            print('boom!!!')    # diagnostyka?
 #            self.display()
@@ -162,6 +155,12 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
             self.Xstep( (x,y) )
 #        self.display()
 
+    def Xflag(self,xy):
+        if self.field[xy][0] == 'F':
+            self.field[xy] = self.field[xy][1:]
+        else:
+            self.field[xy] = 'F' + self.field[xy]
+            
     def flag(self,x,y):    #zbyt krotka nazwa? zbyt niejednoznaczna?
         """
         Zmienia stan oznaczenia pola flaga na przeciwny.
@@ -169,6 +168,9 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         """
         self.Xflag( (x,y) )
 #        self.display()
+        
+    def XnumFlags(self):
+        return list(self.field.values()).count( 'Fe' ) + list(self.field.values()).count( 'FM' )
         
     def minesLeft(self):    #nazwa nieprecyzyjna  getNumMinesLeft?
         """
@@ -178,3 +180,13 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         """
         fl = self.XnumFlags()
         return max( self.totalMines - fl, 0 )
+
+    """
+    metoda zbyt specyficzna czy diagnostyczna?
+    def display(self):
+        print( 'status: ', self.status )
+        print( 'mines left: ', self.minesLeft )
+        self.field.reveal()
+        self.field.display()
+    """
+    
