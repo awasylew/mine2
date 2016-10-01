@@ -20,12 +20,12 @@ def game_new():
 
 @app.route('/step/<x>/<y>')
 def game_step(x,y):
-    g.step(int(x),int(y))
+    g.moveOnField(int(x),int(y))
     return render_template('game.html', game=g)
 
 @app.route('/flag/<x>/<y>')
 def game_flag(x,y):
-    g.flag(int(x),int(y))
+    g.toggleCellFlag(int(x),int(y))
     return render_template('game.html', game=g)
 
 @app.route('/quit_server')

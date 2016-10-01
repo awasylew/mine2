@@ -4,10 +4,11 @@
 	height:60;
 	text-align:center;
 	margin:5;
-	border-left: medium solid;
-	border-top: medium solid;
-	border-right: medium solid;
-	border-bottom: medium solid;
+	border-left: medium solid red;
+	border-top: medium solid red;
+	border-right: medium solid red;
+	border-bottom: medium solid red;
+	border-bottom-color: blue;
 }
 
 .elevated {
@@ -30,7 +31,7 @@
 	margin: 0;
 	border: 0;
 	padding: 0;
-	opacity: 0.05;
+	opacity: 0.15;
 }
 
 .actionsV {

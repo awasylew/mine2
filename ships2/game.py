@@ -111,7 +111,11 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
                 count += 1 
         return count
         
-    def Xexpose(self):
+    def exploreSafeFields(self):
+        """
+        Funkcja automatycznie odslania wszystkie pola sasiadujace z nowoodslonietymi polami wokol ktorych nie ma min.
+        Odslanianie jest kontynuowane rekurencyjnie.
+        """
         again=True
         while again:
             again=False
@@ -120,54 +124,47 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
                     again=True
                     self.field[xy] = '.'
                     for xy1 in self.neighbourCells(xy):
-                        if self.field[xy1] == 'e':
+                        if self.field[xy1] in ['e', 'Fe']:
                             self.field[xy1] = str(self.numNeighbourMines(xy1))
         
+    """
     def Xstep(self,xy):
         if self.field[xy] == 'M':
 #            self.field[xy] = 'B'
             return
         self.field[xy] = str(self.numNeighbourMines(xy))
-        self.Xexpose()
+        self.exploreSafeFields()
+    """
         
-    def step(self,x,y):  #zbyt kr�tka nazwa? zbyt niedok�adna? zbyt niejednoznaczna?
+    def moveOnField(self,x,y):  #zbyt krotka nazwa? zbyt niedokladna? zbyt niejednoznaczna?
         """
-        Odslania pole jak przy wstapieniu na nie.
+        Odslania pole przy wstapieniu na nie.
         Jesli na polu znajduje sie mina, gra sie konczy przegrana.
         Jesli odslonieto wszystko... gra sie konczy wygrana.  --- dorobic
-        Jesli mozna odslonic sasiednie pola, sa one rowwniez odslaniane - rekurencyjnie.
+        Jesli mozna odslonic sasiednie pola, sa one rowniez odslaniane - rekurencyjnie.
         Jesli gra jest zakonczona, metoda nie ma skutkow.
         """
-        
-        if self.status=='game over':
-            print('game over, not stepping in')
-            return
+        xy = x,y
         if self.status == 'ready':
             self.status = 'started'
             self.layMines( x, y )
-        if self.field[ (x,y) ] == 'M':
-#            print('boom!!!')    # diagnostyka?
-#            self.display()
-            self.field[(x,y)] = 'B'
-            self.status='game over'
-#            return
+        if self.field[xy] == 'M':
+            self.field[xy] = 'B'
+            self.status = 'game over'   # fail
         else:
-            self.Xstep( (x,y) )
-#        self.display()
+            self.field[xy] = str(self.numNeighbourMines(xy))
+            self.exploreSafeFields()
 
-    def Xflag(self,xy):
-        if self.field[xy][0] == 'F':
-            self.field[xy] = self.field[xy][1:]
-        else:
-            self.field[xy] = 'F' + self.field[xy]
-            
-    def flag(self,x,y):    #zbyt krotka nazwa? zbyt niejednoznaczna?
+    def toggleCellFlag(self,x,y):    
         """
         Zmienia stan oznaczenia pola flaga na przeciwny.
         Jeeli gra jest zakonczona, metoda nie ma skutkow.    --- nie dziala tak obecnie, potrzebne?
         """
-        self.Xflag( (x,y) )
-#        self.display()
+        xy = x,y
+        if self.field[xy][0] == 'F':
+            self.field[xy] = self.field[xy][1:]
+        else:
+            self.field[xy] = 'F' + self.field[xy]
         
     def XnumFlags(self):
         return list(self.field.values()).count( 'Fe' ) + list(self.field.values()).count( 'FM' )

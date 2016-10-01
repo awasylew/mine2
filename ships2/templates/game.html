@@ -25,7 +25,7 @@
 		<td class='cell{% if f in ['e', 'M', 'Fe', 'FM']%} elevated{% endif %}{% if f =='B' %} boom{% endif %}'>
 
 			{% if status == 'game over' and f in ['M', 'FM', 'B'] %}
-				<img class='' src='{{ url_for('static', filename='mina.png') }}'/>
+				<img src='{{ url_for('static', filename='mina.png') }}'/>
 			{% endif %}
 
 			{% if status in ['ready','started'] and f in ['e', 'M'] %}
