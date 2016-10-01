@@ -16,12 +16,12 @@
 {% set status = game.status %}
 
 <table>
-{% for y in range(game.field.height) %}
+{% for y in range(game.height) %}
 
 	<tr>
-	{% for x in range(game.field.width) %}
+	{% for x in range(game.width) %}
 	
-		{% set f = game.field.field[ x,y ] %}   
+		{% set f = game.field[ x,y ] %}   
 		<td class='cell{% if f in ['e', 'M', 'Fe', 'FM']%} elevated{% endif %}{% if f =='B' %} boom{% endif %}'>
 
 			{% if status == 'game over' and f in ['M', 'FM', 'B'] %}
