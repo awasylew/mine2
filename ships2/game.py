@@ -3,39 +3,50 @@
 # class Field(object):
 class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
     """
-    Obiekt utrzymujacy stan pojedynczej rozgrywki i wykonujacy dzialania w czasie rozgrywki.
+    Obiekt utrzymujacy stan pojedynczej rozgrywki i prowadzacy rozgrywke.
     Gra rozpoczyna sie od wszystkich zakrytych pol. Na niektorych polach znajduja sie miny. Pola mozna odkrywac lub flagowac.
     Gra toczy sie do momentu oznaczenia wszystkich min i odkrycia pozostalych pol lub do wejscia na mine.
+    
+    Wartosci pol:
+    'e' puste
+    'M' mina
+    'Fe' flaga + puste
+    'FM' flaga + mina
+    '.' odsloniete, 0 sasiadow
+    '1'-'8' odsloniete, n sasiadow
+    'B' mina wybuchala
+    
+    Statusy:
+    'ready' poczatek gry, brak odslonietych pol
+    'started' trwa rozgrywka
+    'game over' koniec gry # zmienic na wygrana i przegrana
     """
     
+    # brakuje wykrywania zakonczenia gry sukcesem
+    # brakuje statusow oznaczajacych koniec gry sukcesem/porazka
+    # brakuje gettera do statusu
     
-    """
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-    """
-    def __init__(self):  # brakuje parametryzacji (trudnosc albo wielkosc pola i liczba min)
+    def __init__(self, setWidth=10, setHeight=10, setMines=15):  # brakuje parametryzacji (trudnosc albo wielkosc pola i liczba min)
         """
         Rozpoczyna nowa rozgrywke od wszystkich zakrytych pol i rozlozonych min.
         """
-        # self.field = Field(10,10)
-        self.width = 10
-        self.height = 10
-        self.Xempty() # to pewnie powinno byc czesc konstruktora
-        self.totalMines = 10 # to moze tez powinien byc konstruktor
-        self.XlayMines(self.totalMines) # moze to tez powinien byc konstruktor
-        self.status = 'ready'  # moze jakis getter? moze ENUM?
-
+        self.width = setWidth
+        self.height = setHeight
+        self.totalMines = setMines 
+        self.status = 'ready'  
         
     def Xcells(self):
         for x in range(self.height):
             for y in range(self.width):
                 yield x,y
                 
-    def Xempty(self):
-        self.field=dict()
+    def clearField(self):
+        """
+        Poczatkowe wypelnienie wszystkich pol na pusto.
+        """
+        self.field = dict()
         for xy in self.Xcells():
-                self.field[xy]='e'
+                self.field[xy] = 'e'
         
     """
     def show(self, transform):
@@ -57,13 +68,19 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         self.show( lambda x: '*' if x in ['e', 'M'] else 'F' if x[0]=='F' else x )
     """
         
-    def XlayMines(self, numMines):
+    def XlayMines(self, numMines, startX=None, startY=None):
         for m in range(numMines):
             while True:
                 xy = int(random.random()*self.width), int(random.random()*self.height)
-                if self.field[xy] == 'M':
+                print(m, xy, self.field[xy])
+                if xy == (startX, startY):
                     continue
-                self.field[xy] = 'M'
+                if self.field[xy] in ['M', 'FM']:
+                    continue
+                if self.field[xy] == 'e':
+                    self.field[xy] = 'M'
+                else:
+                    self.field[xy] = 'FM' 
                 break
 
     def Xneighbours(self,xy):
@@ -132,6 +149,9 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         if self.status=='game over':
             print('game over, not stepping in')
             return
+        if self.status == 'ready':
+            self.status = 'started'
+            self.XlayMines( self.totalMines, x, y )
         if self.field[ (x,y) ] == 'M':
 #            print('boom!!!')    # diagnostyka?
 #            self.display()

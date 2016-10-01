@@ -28,7 +28,7 @@
 				<img class='' src='{{ url_for('static', filename='mina.png') }}'/>
 			{% endif %}
 
-			{% if status == 'ready' and f in ['e', 'M'] %}
+			{% if status in ['ready','started'] and f in ['e', 'M'] %}
 				<a href='/flag/{{ x }}/{{ y }}'><img class='actions flaga' src='{{ url_for('static', filename='flaga.png') }}'/></a>
 			{% endif %}
 
@@ -36,11 +36,11 @@
 				<p class='minecount{{ f }}'>{{ f }}</p>
 			{% endif %}
 
-			{% if status == 'ready' and f in ['Fe', 'FM'] %}
+			{% if status in ['ready','started'] and f in ['Fe', 'FM'] %}
 				<a href='/flag/{{ x }}/{{ y }}'><img class='actionV' src='{{ url_for('static', filename='flaga.png') }}'/></a>
 			{% endif %}
 
-			{% if status == 'ready' and f in ['e', 'M'] %}
+			{% if status in ['ready','started'] and f in ['e', 'M'] %}
 				<a href='/step/{{ x }}/{{ y }}'><img class='actions stopy' src='{{ url_for('static', filename='stopy.png') }}'/></a>
 			{% endif %}
 
