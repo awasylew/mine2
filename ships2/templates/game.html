@@ -11,7 +11,7 @@
 
 <div>status: {{ game.status }} </div>
 
-<div>mines left: {{ game.minesLeft() }} </div> 
+<div>mines left: {{ game.getMinesLeft() }} </div> 
 
 {% set status = game.status %}
 
@@ -24,8 +24,12 @@
 		{% set f = game.field[ x,y ] %}   
 		<td class='cell{% if f in ['e', 'M', 'Fe', 'FM']%} elevated{% endif %}{% if f =='B' %} boom{% endif %}'>
 
-			{% if status == 'game over' and f in ['M', 'FM', 'B'] %}
+			{% if status == 'fail' and f in ['M', 'FM', 'B'] %}
 				<img src='{{ url_for('static', filename='mina.png') }}'/>
+			{% endif %}
+
+			{% if status == 'fail' and f == 'Fe' %}
+				<img src='{{ url_for('static', filename='minax.png') }}'/>
 			{% endif %}
 
 			{% if status in ['ready','started'] and f in ['e', 'M'] %}

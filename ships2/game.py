@@ -25,6 +25,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
     # brakuje wykrywania zakonczenia gry sukcesem
     # brakuje statusow oznaczajacych koniec gry sukcesem/porazka
     # brakuje gettera do statusu
+    # ENUMy zamiast tekstow?
     
     def __init__(self, setWidth=10, setHeight=10, setMines=15):
         """
@@ -51,26 +52,6 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         self.field = dict()
         for xy in self.allCells():
                 self.field[xy] = 'e'
-        
-    """
-    def show(self, transform):
-        print('   ', end='')
-        for x in range(self.width):
-            print( "%s  " % chr( x + ord('a')), end='')
-        print()
-        for y in range(self.height):
-            print( "%2d " % (y+1), end='' )
-            for x in range(self.width):
-                print(transform(self.field[(x,y)]), ' ', end='')
-            print()
-        print()
-    
-    def reveal(self):
-        self.show( lambda x: x )
-
-    def display(self):
-        self.show( lambda x: '*' if x in ['e', 'M'] else 'F' if x[0]=='F' else x )
-    """
         
     def layMines(self, startX=None, startY=None):
         """
@@ -127,15 +108,6 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
                         if self.field[xy1] in ['e', 'Fe']:
                             self.field[xy1] = str(self.numNeighbourMines(xy1))
         
-    """
-    def Xstep(self,xy):
-        if self.field[xy] == 'M':
-#            self.field[xy] = 'B'
-            return
-        self.field[xy] = str(self.numNeighbourMines(xy))
-        self.exploreSafeFields()
-    """
-        
     def moveOnField(self,x,y):  #zbyt krotka nazwa? zbyt niedokladna? zbyt niejednoznaczna?
         """
         Odslania pole przy wstapieniu na nie.
@@ -150,7 +122,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
             self.layMines( x, y )
         if self.field[xy] == 'M':
             self.field[xy] = 'B'
-            self.status = 'game over'   # fail
+            self.status = 'fail'   # fail
         else:
             self.field[xy] = str(self.numNeighbourMines(xy))
             self.exploreSafeFields()
@@ -166,24 +138,37 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         else:
             self.field[xy] = 'F' + self.field[xy]
         
-    def XnumFlags(self):
-        return list(self.field.values()).count( 'Fe' ) + list(self.field.values()).count( 'FM' )
-        
-    def minesLeft(self):    #nazwa nieprecyzyjna  getNumMinesLeft?
+    def getMinesLeft(self):
         """
         Pobiera liczbe nieoznaczonych min - wynikajaca z wypelnienia planszy i oznaczen flagami. 
-        Nie bada dopasowania flag do min.
-        Jeeli flag jest wiecej niz min, zwraca zero. 
+        Nie bada dopasowania flag do min - jesli gracz zle stawia flagi, to licznik i tak się zmniejsza.
+        Jesli flag jest wiecej niz min, zwraca zero. 
         """
-        fl = self.XnumFlags()
+        fl = list(self.field.values()).count( 'Fe' ) + list(self.field.values()).count( 'FM' )
         return max( self.totalMines - fl, 0 )
 
     """
-    metoda zbyt specyficzna czy diagnostyczna?
+    def show(self, transform):
+        print('   ', end='')
+        for x in range(self.width):
+            print( "%s  " % chr( x + ord('a')), end='')
+        print()
+        for y in range(self.height):
+            print( "%2d " % (y+1), end='' )
+            for x in range(self.width):
+                print(transform(self.field[(x,y)]), ' ', end='')
+            print()
+        print()
+    
+    def reveal(self):
+        self.show( lambda x: x )
+
+    def display(self):
+        self.show( lambda x: '*' if x in ['e', 'M'] else 'F' if x[0]=='F' else x )
+        
     def display(self):
         print( 'status: ', self.status )
         print( 'mines left: ', self.minesLeft )
         self.field.reveal()
         self.field.display()
     """
-    
