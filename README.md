@@ -1,15 +1,22 @@
 # ships2
 
-Moja zabawa w aplikację chmurową. Nie będzie rozwijana do pełnej funkcjonalności - tylko tyle ile będzie mi potrzebne do testów, na jakie akurat nabiorę ochoty.
+Moja zabawa w aplikację chmurową. 
+Nie będzie rozwijana do pełnej funkcjonalności - tylko tyle ile będzie mi potrzebne do testów, na jakie akurat nabiorę ochoty.
 
 
 # zapiski, zadania z RESTful - UPORZĄDKOWAĆ
 ścieżka zdrowia – OPCJONALNIE (zdecydować czy robić czy tylko się dowiedzieć)
+
 GET/POST/PATH/DELETE – zapytania i odpowiedzi
+
 HTTPS
+
 OAuth2
+
 wyniki/kody błędów
+
 paging
+
 format wyniku JSON/XML
 
 uproszczenie modelu
