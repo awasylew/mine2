@@ -30,13 +30,22 @@ definicje pola
 		pole/akcja – flaga+/flaga-/wstąpienie
 
 http://example.com/api/v1/games/739/       
+
 GET field?x=3&y=4        - jedno zapytanie, wynik zakryte/flaga/liczba/puste/(mina)/(mina-bez-flagi)
 { ‘mine’: ‘false’; ‘flag’:’false’; ‘count’:’3’; ‘exposed’:’true’ }
 ‘status’:’3’ / ‘status’:’hidden’
 POST field?x=3&y=4&action=step/set-flag/reset-flag      - jedno ustawienie bez parametrów
+
+
+GET field
+
 POST field/step?x=3&y=4
+
 POST field/flag?x=3&y=4 
+
 POST field/unflag?x=3&y=4
+
+
 POST/PATCH field?x=3&y=4     - jedno ustawienie, parametry w treści 
 { ‘flag’:’true’ } / { ‘flag’:’false’ } / { ‘exposed’:’true’ }
 
