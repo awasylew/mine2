@@ -6,9 +6,8 @@
 	margin:5;
 	border-left: medium solid #b0b0b0;
 	border-top: medium solid #b0b0b0;
-	border-right: medium solid red;
-	border-bottom: medium solid red;
-	border-bottom-color: #b0b0b0;
+	border-right: medium solid #b0b0b0;
+	border-bottom: medium solid #b0b0b0;
 }
 
 .elevated {
@@ -21,6 +20,10 @@
 
 .boom {
 	background-color: red;
+	border-left: medium solid red;
+	border-top: medium solid red;
+	border-right: medium solid red;
+	border-bottom: medium solid red;
 }
 
 .child {

@@ -1,7 +1,6 @@
 ﻿import random
 
-# class Field(object):
-class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
+class Game(object):  
     """
     Obiekt utrzymujacy stan pojedynczej rozgrywki i prowadzacy rozgrywke.
     Gra rozpoczyna sie od wszystkich zakrytych pol. Na niektorych polach znajduja sie miny. Pola mozna odkrywac lub flagowac.
@@ -19,15 +18,13 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
     Statusy:
     'ready' poczatek gry, brak odslonietych pol
     'started' trwa rozgrywka
-    'game over' koniec gry # zmienic na wygrana i przegrana
+    'success' koniec gry - wygrana
+    'fail' koniec gry - przegrana
     """
     
-    # brakuje wykrywania zakonczenia gry sukcesem
-    # brakuje statusow oznaczajacych koniec gry sukcesem/porazka
-    # brakuje gettera do statusu
+    # brakuje gettera do statusu?
     # ENUMy zamiast tekstow?
     
-#    def __init__(self, setWidth=10, setHeight=10, setMines=15):
     def __init__(self, setWidth=6, setHeight=6, setMines=5):
         """
         Rozpoczyna nowa rozgrywke od wszystkich zakrytych pol i rozlozonych min.
@@ -38,6 +35,37 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         self.status = 'ready'  
         self.clearField()
         
+    def surfaceString(self):
+        """
+        Zwraca cale pole jako jeden napis wierszami z gory na dol. Wiersze oddzielone '/'.
+        Wiersze od lewej do prawej. Pola oddzielone '/'.
+        Przyklad 3x3: 'e/e/e//e/e/e//e/e/e//'
+        Pola odsloniete '.', 'B', '1'-'9' sa pokazywane bez zmian.
+        Pola zasloniete ('e' i 'M') sa pokazywane jako 'X'.
+         
+        """
+        result = ''
+        for y in range(self.width):
+            for x in range(self.height):
+                f = self.field[ x,y ]
+                if f in [ '.', '1', '2', '3', '4', '5', '6', '7', '8', 'B']:
+                    result += f
+                elif f in [ 'Fe', 'FM' ]:
+                    if self.status == 'fail':
+                        result += f
+                    else:
+                        result += 'F' 
+                elif f == 'M':
+                    if self.status == 'fail':
+                        result += f
+                    else:
+                        result += 'X' 
+                else:  # 'e'
+                    result += 'X' 
+                result += '/'
+            result += '/'
+        return result
+    
     def allCells(self):
         """
         Funkcja pomocnicza - generuje oniesienia do wszystkich elementow planszy
@@ -118,7 +146,7 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
            list(self.field.values()).count( 'M' ) == 0:
             self.status = 'success'
     
-    def moveOnField(self,x,y):  #zbyt krotka nazwa? zbyt niedokladna? zbyt niejednoznaczna?
+    def stepOnField(self,x,y):  #zbyt krotka nazwa? zbyt niedokladna? zbyt niejednoznaczna?
         """
         Odslania pole przy wstapieniu na nie.
         Jesli na polu znajduje sie mina, gra sie konczy przegrana.
@@ -126,6 +154,8 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         Jesli mozna odslonic sasiednie pola, sa one rowniez odslaniane - rekurencyjnie.
         Jesli gra jest zakonczona, metoda nie ma skutkow.
         """
+        if self.status in ['fail', 'success']:
+            return
         xy = x,y
         if self.status == 'ready':
             self.status = 'started'
@@ -185,3 +215,20 @@ class Game(object):  #zbyt krotka nazwa? ShipsGame ShipsPlay GameOfShips
         self.field.reveal()
         self.field.display()
     """
+
+class GameSet(object):
+    
+    def startNewGame(self): # zwraca id gry
+        pass
+    
+    def getGameList(self): # zwraca listę id gier
+        pass
+    
+    def getGameByID(self,id):  # zwraca obiekt gry
+        pass
+
+    def deleteGame(self,id):  # usuwa gr
+        pass
+    
+    # KIEDY UTRWALAC GRE w BAZIE DANYCH???
+    
