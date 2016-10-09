@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import redirect, url_for
 from flask import jsonify
 import os
 from game import Game
@@ -29,17 +30,20 @@ def api_field_get():
 def game_new():
     global g
     g = Game()
-    return render_template('game.html', game=g )
+#    return render_template('game.html', game=g )
+    return redirect( url_for('game_default'))
 
 @app.route('/step/<x>/<y>')
 def game_step(x,y):
     g.stepOnField(int(x),int(y))
-    return render_template('game.html', game=g)
+#    return render_template('game.html', game=g)
+    return redirect( url_for('game_default'))
 
 @app.route('/flag/<x>/<y>')
 def game_flag(x,y):
     g.toggleCellFlag(int(x),int(y))
-    return render_template('game.html', game=g)
+#    return render_template('game.html', game=g)
+    return redirect( url_for('game_default'))
 
 @app.route('/quit_server')
 def quit_server():

@@ -166,7 +166,7 @@ class Game(object):
         else:
             self.field[xy] = str(self.numNeighbourMines(xy))
             self.exploreSafeFields()
-        print(list(self.field.values()).count( 'Fe' ) , list(self.field.values()).count( 'e' ) )
+        # print(list(self.field.values()).count( 'Fe' ) , list(self.field.values()).count( 'e' ) )
         self.checkSuccess()
 
     def toggleCellFlag(self,x,y):    

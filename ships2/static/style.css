@@ -20,10 +20,11 @@
 
 .boom {
 	background-color: red;
-	border-left: medium solid red;
-	border-top: medium solid red;
-	border-right: medium solid red;
-	border-bottom: medium solid red;
+	x-border-left: medium solid red;
+	x-border-top: medium solid red;
+	x-border-right: medium solid red;
+	x-border-bottom: medium solid red;
+	border-color: red;
 }
 
 .child {
