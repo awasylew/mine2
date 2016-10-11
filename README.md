@@ -3,6 +3,16 @@
 Moja zabawa w aplikację chmurową. 
 Nie będzie rozwijana do pełnej funkcjonalności - tylko tyle ile będzie mi potrzebne do testów, na jakie akurat nabiorę ochoty.
 
+# archeytypy na podstawie TMF
+
+## kolekcje zasobów
+*kolekcje* składają się oddzielnych **zasobów**
+
+## zasoby
+każdy _zasób_ ma pola prosta zarządzane przez HTTP oraz podobiekty - __podzasoby__
+
+## działania
+czasowniki, które nie mieszczą się w podejściu zasobowym
 
 # zapiski, zadania z RESTful - UPORZĄDKOWAĆ
 ścieżka zdrowia – OPCJONALNIE (zdecydować czy robić czy tylko się dowiedzieć)
