@@ -6,13 +6,17 @@ Nie będzie rozwijana do pełnej funkcjonalności - tylko tyle ile będzie mi po
 # archeytypy na podstawie TMF
 
 ## kolekcje zasobów
-*kolekcje* składają się oddzielnych **zasobów**
+*kolekcje* składają się oddzielnych *zasobów*
+	/games/
 
 ## zasoby
-każdy _zasób_ ma pola prosta zarządzane przez HTTP oraz podobiekty - __podzasoby__
+każdy _zasób_ ma pola prosta zarządzane przez HTTP oraz podobiekty - _podzasoby_
+	/games/3654/
 
 ## działania
 czasowniki, które nie mieszczą się w podejściu zasobowym
+w tej grupie potrzebne stosowne wejście i wyjście
+	/games/3654/set_flag?x=2&y=3
 
 # zapiski, zadania z RESTful - UPORZĄDKOWAĆ
 ścieżka zdrowia – OPCJONALNIE (zdecydować czy robić czy tylko się dowiedzieć)
