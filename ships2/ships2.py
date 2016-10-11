@@ -54,9 +54,9 @@ def quit_server():
     return "Quitting server... <br/> <a href='/new_game'>restart</a>"
    
 # try:
-#port = int(os.getenv("PORT"))
 if __name__ == '__main__':
-#    app.run(host='0.0.0.0', port=port) 
-    app.run( debug=True )
+    port = int(os.getenv("PORT"))
+    app.run(host='0.0.0.0', port=port) 
+#    app.run()
 #except:
 #    pass

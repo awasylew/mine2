@@ -38,32 +38,37 @@ class Game(object):
     def surfaceString(self):
         """
         Zwraca cale pole jako jeden napis wierszami z gory na dol. Wiersze oddzielone '/'.
-        Wiersze od lewej do prawej. Pola oddzielone '/'.
-        Przyklad 3x3: 'e/e/e//e/e/e//e/e/e//'
+        Wiersze od lewej do prawej. Pola oddzielone '&'.
+        Przyklad 3x3: 'e&e&e/e&e&e/e&e&e'
         Pola odsloniete '.', 'B', '1'-'9' sa pokazywane bez zmian.
         Pola zasloniete ('e' i 'M') sa pokazywane jako 'X'.
          
         """
         result = ''
         for y in range(self.width):
+            row = ''
             for x in range(self.height):
                 f = self.field[ x,y ]
                 if f in [ '.', '1', '2', '3', '4', '5', '6', '7', '8', 'B']:
-                    result += f
+                    fld = f
                 elif f in [ 'Fe', 'FM' ]:
                     if self.status == 'fail':
-                        result += f
+                        fld = f
                     else:
-                        result += 'F' 
+                        fld = 'F' 
                 elif f == 'M':
                     if self.status == 'fail':
-                        result += f
+                        fld = f
                     else:
-                        result += 'X' 
+                        fld = 'X' 
                 else:  # 'e'
-                    result += 'X' 
+                    fld = 'X'
+                if row != '':
+                    row += '&'
+                row += fld 
+            if result != '':
                 result += '/'
-            result += '/'
+            result += row
         return result
     
     def allCells(self):
