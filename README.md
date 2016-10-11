@@ -13,7 +13,7 @@ Nie będzie rozwijana do pełnej funkcjonalności - tylko tyle ile będzie mi po
 ## zasoby
 każdy _zasób_ ma pola prosta zarządzane przez HTTP oraz podobiekty - _podzasoby_
 
-		/games/3654/
+	/games/3654/
 
 ## działania
 czasowniki, które nie mieszczą się w podejściu zasobowym
@@ -24,17 +24,17 @@ w tej grupie potrzebne stosowne wejście i wyjście
 # zapiski, zadania z RESTful - UPORZĄDKOWAĆ
 ścieżka zdrowia – OPCJONALNIE (zdecydować czy robić czy tylko się dowiedzieć)
 
-GET/POST/PATH/DELETE – zapytania i odpowiedzi
-
-HTTPS
-
-OAuth2
+* GET/POST/PATH/DELETE – zapytania i odpowiedzi
+* HTTPS
+* OAuth2
 
 wyniki/kody błędów
 
 paging
 
 format wyniku JSON/XML
+
+WADL, Swagger/OpenAPI
 
 uproszczenie modelu
 definicje pola
