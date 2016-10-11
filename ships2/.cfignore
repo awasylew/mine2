@@ -1,0 +1,4 @@
+grafika/
+__pycache__/
+venv/
+.settings/
