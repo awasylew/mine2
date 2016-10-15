@@ -2,5 +2,5 @@
 applications:
 - name: ships2
   memory: 128M
-  instances: 2
+  instances: 1
   host: ships2

@@ -1,4 +1,4 @@
-﻿import random
+﻿from random import random 
 
 class Game(object):  
     """
@@ -95,7 +95,7 @@ class Game(object):
         """
         for m in range(self.totalMines):
             while True:
-                xy = int(random.random()*self.width), int(random.random()*self.height)
+                xy = int(random()*self.width), int(random()*self.height)
                 if xy == (startX, startY):
                     continue
                 if self.field[xy] in ['M', 'FM']:
@@ -239,14 +239,23 @@ class Game(object):
 
 class GameSet(object):
     
-    def startNewGame(self): # zwraca id gry
-        pass
+    def __init__(self):
+        self.games = dict()
+    
+    def startNewGame(self): # zwraca id gry 
+        id = int( random() * 9000 + 1000)
+        while( id in self.games ):
+            id = int( random() * 9000 + 1000)
+        new_game = Game()
+        self.games[id] = new_game
+        return id
+        
     
     def getGameList(self): # zwraca listę id gier
-        pass
+        return list( self.games.keys())
     
     def getGameByID(self,id):  # zwraca obiekt gry
-        pass
+        return self.games[id]
 
     def deleteGame(self,id):  # usuwa gr
         pass

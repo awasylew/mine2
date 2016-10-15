@@ -45,15 +45,15 @@
 			{% endif %}
 
 			{% if status in ['ready','started'] and f in ['e', 'M'] %}
-				<a href='/flag/{{ x }}/{{ y }}/true'><img class='actions flaga' src='{{ url_for('static', filename='flaga.png') }}'/></a>
+				<a href='{{ game_url }}/flag/{{ x }}/{{ y }}/true'><img class='actions flaga' src='{{ url_for('static', filename='flaga.png') }}'/></a>
 			{% endif %}
 
 			{% if status in ['ready','started'] and f in ['Fe', 'FM'] %}
-				<a href='/flag/{{ x }}/{{ y }}/false'><img class='actionV' src='{{ url_for('static', filename='flaga.png') }}'/></a>
+				<a href='{{ game_url }}/flag/{{ x }}/{{ y }}/false'><img class='actionV' src='{{ url_for('static', filename='flaga.png') }}'/></a>
 			{% endif %}
 
 			{% if status in ['ready','started'] and f in ['e', 'M'] %}
-				<a href='/step/{{ x }}/{{ y }}'><img class='actions stopy' src='{{ url_for('static', filename='stopy.png') }}'/></a>
+				<a href='{{ game_url }}/step/{{ x }}/{{ y }}'><img class='actions stopy' src='{{ url_for('static', filename='stopy.png') }}'/></a>
 			{% endif %}
 		</td>
 	{% endfor %}
@@ -62,6 +62,10 @@
 </table>
 
 <div><a href='/quit_server'>Quit server</a></div>
+
+{% for game_id in game_ids %}
+	<div><a href='{{ games_url }}/{{game_id}}'>{{ game_id }}</a></div>
+{% endfor %}
 
 </body>
 </html>

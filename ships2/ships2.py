@@ -5,15 +5,24 @@ from flask import redirect, url_for
 from flask import jsonify
 import os
 from game import Game
-
+from game import GameSet
+ 
 app = Flask(__name__) 
 g = Game()
+gs = GameSet()
 api_prefix = '/api/v1'
 
 @app.route('/')
 def game_default():
     global g
     return render_template('game.html', game=g )
+
+@app.route('/ab/games/<int:game_id>')
+def ab_games_default( game_id ):
+    game = gs.getGameByID( game_id )
+    game_ids = gs.getGameList()
+    return render_template('game.html', game=game, game_url=url_for('ab_games_default', game_id=game_id), 
+                           game_ids=game_ids, games_url='/ab/games' )
 
 @app.route( api_prefix + '/field')
 def api_show_field():
@@ -23,7 +32,7 @@ def api_show_field():
            'totalMines': g.totalMines,
            'status': g.status,
            'field': g.fieldAsString(True) }
-    return jsonify(rsp), 200
+    return jsonify(rsp), 200                                        # dodac naglowki
 
 @app.route('/new_game')
 def game_new():
@@ -31,10 +40,28 @@ def game_new():
     g = Game()
     return redirect( url_for('game_default'))
 
+@app.route('/ab/games/new')
+def ab_new_game():
+    id = gs.startNewGame()
+    return 'id = ' + str(id)
+
+@app.route('/ab/games')
+def ab_games():
+    rsp = {'game_ids': gs.getGameList()}
+    print( rsp )
+    return jsonify( rsp ), 200
+
 @app.route('/step/<x>/<y>')
 def game_step(x,y):
     g.stepOnField(int(x),int(y)) # brak obslugi bledow
     return redirect( url_for('game_default'))
+
+@app.route('/ab/games/<int:game_id>/step/<x>/<y>')
+def ab_game_step( game_id, x, y ):
+    game = gs.getGameByID( game_id )
+    game.stepOnField(int(x),int(y)) # brak obslugi bledow
+#    return render_template( 'game.html', game=game, game_url=url_for('ab_games_default', game_id=game_id))
+    return redirect( url_for('ab_games_default', game_id=game_id ))
 
 @app.route( api_prefix + '/step', methods=['GET', 'POST'] )                                  # powinno byc tylko POST
 def api_step():
@@ -44,7 +71,7 @@ def api_step():
         if not 0 <= x < g.width or not 0 <= y < g.height:
             raise 
     except:
-        return 'Expecting params 0,0 <= x,y < width,height', 400
+        return 'Expecting params 0,0 <= x,y < width,height', 400        # dodac naglowki
     g.stepOnField( x, y )
     return api_show_field()
     
@@ -65,6 +92,13 @@ def api_set_flag():
 def game_flag(x,y,state):
     g.setFlag( int(x), int(y), state.upper()=='TRUE' )  # brak obslugi bledow
     return redirect( url_for('game_default'))
+
+@app.route('/ab/games/<int:game_id>/flag/<x>/<y>/<state>')
+def ab_game_flag( game_id, x, y, state ):
+    game = gs.getGameByID( game_id )
+    game.setFlag( int(x), int(y), state.upper()=='TRUE' ) # brak obslugi bledow
+#    return render_template( 'game.html', game=game, game_url=url_for('ab_games_default', game_id=game_id))
+    return redirect( url_for('ab_games_default', game_id=game_id ))
 
 @app.route('/quit_server')
 def quit_server():
