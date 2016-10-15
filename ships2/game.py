@@ -35,21 +35,22 @@ class Game(object):
         self.status = 'ready'  
         self.clearField()
         
-    def surfaceString(self):
+    def fieldAsString(self, external=False):
         """
         Zwraca cale pole jako jeden napis wierszami z gory na dol. Wiersze oddzielone '/'.
-        Wiersze od lewej do prawej. Pola oddzielone '&'.
+        Pola wierszy od lewej do prawej. Pola oddzielone '&'.
         Przyklad 3x3: 'e&e&e/e&e&e/e&e&e'
-        Pola odsloniete '.', 'B', '1'-'9' sa pokazywane bez zmian.
-        Pola zasloniete ('e' i 'M') sa pokazywane jako 'X'.
-         
+        W trybie wewnetrzym (external=False) pola sa reprezentowane bez zmian. 
+        W zawnetrznym:
+            Pola odsloniete '.', 'B', '1'-'9' sa pokazywane bez zmian.
+            Pola przeksztalcane, zeby ukryc zawartosc (zaleznie of statusu gry).
         """
         result = ''
         for y in range(self.width):
             row = ''
             for x in range(self.height):
                 f = self.field[ x,y ]
-                if f in [ '.', '1', '2', '3', '4', '5', '6', '7', '8', 'B']:
+                if not external or f in [ '.', '1', '2', '3', '4', '5', '6', '7', '8', 'B']:
                     fld = f
                 elif f in [ 'Fe', 'FM' ]:
                     if self.status == 'fail':
@@ -70,6 +71,7 @@ class Game(object):
                 result += '/'
             result += row
         return result
+        
     
     def allCells(self):
         """
@@ -151,7 +153,7 @@ class Game(object):
            list(self.field.values()).count( 'M' ) == 0:
             self.status = 'success'
     
-    def stepOnField(self,x,y):  #zbyt krotka nazwa? zbyt niedokladna? zbyt niejednoznaczna?
+    def stepOnField(self,x,y):  #zbyt krotka nazwa? zbyt niedokladna? zbyt niejednoznaczna? # zabronionosc wg statusu
         """
         Odslania pole przy wstapieniu na nie.
         Jesli na polu znajduje sie mina, gra sie konczy przegrana.
@@ -171,7 +173,6 @@ class Game(object):
         else:
             self.field[xy] = str(self.numNeighbourMines(xy))
             self.exploreSafeFields()
-        # print(list(self.field.values()).count( 'Fe' ) , list(self.field.values()).count( 'e' ) )
         self.checkSuccess()
 
     def toggleCellFlag(self,x,y):    
@@ -186,6 +187,21 @@ class Game(object):
             self.field[xy] = 'F' + self.field[xy]
         self.checkSuccess()
         
+    def setFlag(self,x,y,state):
+        """
+        Ustawia (state==True) na polu lub usuwa (state==False) flage z pola, jesli mozna to zrobic. Sprawdza warunek konca gry.
+        W przeciwnym razie - brak skutkow.
+        """
+        xy = x,y
+        if state:
+            if self.field[xy] in ['e','M']:
+                self.field[xy] = 'F' + self.field[xy]
+                self.checkSuccess()
+        else:
+            if self.field[xy] in ['Fe','FM']:
+                self.field[xy] = self.field[xy][1:]
+                self.checkSuccess()
+    
     def getMinesLeft(self):
         """
         Pobiera liczbe nieoznaczonych min - wynikajaca z wypelnienia planszy i oznaczen flagami. 

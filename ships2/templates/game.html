@@ -45,11 +45,11 @@
 			{% endif %}
 
 			{% if status in ['ready','started'] and f in ['e', 'M'] %}
-				<a href='/flag/{{ x }}/{{ y }}'><img class='actions flaga' src='{{ url_for('static', filename='flaga.png') }}'/></a>
+				<a href='/flag/{{ x }}/{{ y }}/true'><img class='actions flaga' src='{{ url_for('static', filename='flaga.png') }}'/></a>
 			{% endif %}
 
 			{% if status in ['ready','started'] and f in ['Fe', 'FM'] %}
-				<a href='/flag/{{ x }}/{{ y }}'><img class='actionV' src='{{ url_for('static', filename='flaga.png') }}'/></a>
+				<a href='/flag/{{ x }}/{{ y }}/false'><img class='actionV' src='{{ url_for('static', filename='flaga.png') }}'/></a>
 			{% endif %}
 
 			{% if status in ['ready','started'] and f in ['e', 'M'] %}

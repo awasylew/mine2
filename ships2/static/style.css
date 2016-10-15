@@ -4,10 +4,7 @@
 	height:60;
 	text-align:center;
 	margin:5;
-	border-left: medium solid #b0b0b0;
-	border-top: medium solid #b0b0b0;
-	border-right: medium solid #b0b0b0;
-	border-bottom: medium solid #b0b0b0;
+	border: medium solid #b0b0b0;
 }
 
 .elevated {
@@ -20,15 +17,7 @@
 
 .boom {
 	background-color: red;
-	x-border-left: medium solid red;
-	x-border-top: medium solid red;
-	x-border-right: medium solid red;
-	x-border-bottom: medium solid red;
 	border-color: red;
-}
-
-.child {
-	vertical-align: middle;
 }
 
 .actions {
