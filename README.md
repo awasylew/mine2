@@ -22,9 +22,9 @@ każdy _zasób_ ma pola prosta zarządzane przez HTTP oraz podobiekty - _podzaso
 czasowniki, które nie mieszczą się w podejściu zasobowym
 w tej grupie potrzebne stosowne wejście i wyjście
 
-	{root}/games/3654/set_flag?x=2&y=3
-	{root}/games/3654/reset_flag?x=2&y=3
-	{root}/games/3654/step?x=2&y=3
+	[done] POST {root}/games/3654/set_flag?x=2&y=3&state=true
+	[done] POST {root}/games/3654/set_flag?x=0&y=2&state=false
+	[done] POST {root}/games/3654/step?x=2&y=3
 
 # zapiski, zadania z RESTful - UPORZĄDKOWAĆ
 ścieżka zdrowia – OPCJONALNIE (zdecydować czy robić czy tylko się dowiedzieć)
