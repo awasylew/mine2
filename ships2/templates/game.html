@@ -11,6 +11,8 @@
 
 <div>status: {{ game.status }} </div>
 
+<div>total mines: {{ game.totalMines }} </div> 
+
 <div>mines left: {{ game.getMinesLeft() }} </div> 
 
 {% set status = game.status %}
@@ -22,7 +24,7 @@
 	{% for x in range(game.width) %}
 	
 		{% set f = game.field[ x,y ] %}   
-		<td class='cell{% if f in ['e'] or game.status != 'fail' and f in ['M', 'Fe', 'FM'] %} elevated{% endif %}{% if f =='B' %} boom{% endif %}'>
+		<td class='cell{% if f in ['e', 'FM'] or game.status != 'fail' and f in ['M', 'Fe', 'FM'] %} elevated{% endif %}{% if f =='B' %} boom{% endif %}'>
 
 			{% if f in ['1', '2', '3', '4', '5', '6', '7', '8', '9'] %}
 				<p class='minecount{{ f }}'>{{ f }}</p>
@@ -44,11 +46,11 @@
 				<img src='{{ url_for('static', filename='flaga.png') }}'/>
 			{% endif %}
 
-			{% if status in ['ready','started'] and f in ['e', 'M'] %}
+			{% if status == 'started' and f in ['e', 'M'] %}
 				<a href='{{ game_url }}/flag/{{ x }}/{{ y }}/true'><img class='actions flaga' src='{{ url_for('static', filename='flaga.png') }}'/></a>
 			{% endif %}
 
-			{% if status in ['ready','started'] and f in ['Fe', 'FM'] %}
+			{% if status == 'started' and f in ['Fe', 'FM'] %}
 				<a href='{{ game_url }}/flag/{{ x }}/{{ y }}/false'><img class='actionV' src='{{ url_for('static', filename='flaga.png') }}'/></a>
 			{% endif %}
 
@@ -66,6 +68,8 @@
 {% for game_id in game_ids %}
 	<div><a href='{{ games_url }}/{{game_id}}'>{{ game_id }}</a></div>
 {% endfor %}
+
+<div><a href='/ab/games/new'>new game in set</a></div>
 
 </body>
 </html>

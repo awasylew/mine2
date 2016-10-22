@@ -12,6 +12,7 @@ class Game(object):
     'Fe' flaga + puste
     'FM' flaga + mina
     '.' odsloniete, 0 sasiadow
+    '0' tymczasowy stan wystepujace w trakcie odslaniania pola po wejsciu; nie jest widoczny w stanie ustalonym
     '1'-'8' odsloniete, n sasiadow
     'B' mina wybuchala
     
@@ -22,16 +23,16 @@ class Game(object):
     'fail' koniec gry - przegrana
     """
     
-    # brakuje gettera do statusu?
     # ENUMy zamiast tekstow?
     
-    def __init__(self, setWidth=6, setHeight=6, setMines=5):
+    def __init__(self, setWidth=5, setHeight=5, setTotalMines=4):
         """
-        Rozpoczyna nowa rozgrywke od wszystkich zakrytych pol i rozlozonych min.
+        Rozpoczyna nowa rozgrywke od wszystkich zakrytych pol, bez rozlozenia min.
+        Miny zostana dodane po okreciu pierwszego pola.
         """
         self.width = setWidth
         self.height = setHeight
-        self.totalMines = setMines 
+        self.totalMines = setTotalMines 
         self.status = 'ready'  
         self.clearField()
         
@@ -41,9 +42,9 @@ class Game(object):
         Pola wierszy od lewej do prawej. Pola oddzielone '&'.
         Przyklad 3x3: 'e&e&e/e&e&e/e&e&e'
         W trybie wewnetrzym (external=False) pola sa reprezentowane bez zmian. 
-        W zawnetrznym:
+        W zewnetrznym:
             Pola odsloniete '.', 'B', '1'-'9' sa pokazywane bez zmian.
-            Pola przeksztalcane, zeby ukryc zawartosc (zaleznie of statusu gry).
+            Pozostale pola przeksztalcane, zeby ukryc zawartosc (warunkowo zaleznie of statusu gry).
         """
         result = ''
         for y in range(self.width):
@@ -81,43 +82,41 @@ class Game(object):
             for y in range(self.width):
                 yield x,y
                 
-    def clearField(self):
-        """
-        Poczatkowe wypelnienie wszystkich pol na pusto.
-        """
-        self.field = dict()
-        for xy in self.allCells():
-                self.field[xy] = 'e'
-        
-    def layMines(self, startX=None, startY=None):
-        """
-        Rozklada miny na planszy unikajac wskazanego pola.
-        """
-        for m in range(self.totalMines):
-            while True:
-                xy = int(random()*self.width), int(random()*self.height)
-                if xy == (startX, startY):
-                    continue
-                if self.field[xy] in ['M', 'FM']:
-                    continue
-                break
-            if self.field[xy] == 'e':
-                self.field[xy] = 'M'
-            else:
-                self.field[xy] = 'FM' 
-
     def neighbourCells(self,xy):
         """
-        Generuje wspolrzedne wszystkich pol otaczajacych dane pole - sprawdzajac czy nie wychodza poza plansze.
+        Funkcja pomocnicza - generuje wspolrzedne wszystkich pol otaczajacych dane pole - sprawdzajac czy nie wychodza poza plansze.
         """
         for dx in [-1,0,1]:
             for dy in [-1,0,1]:
                 if dx==0 and dy==0:
                     continue
                 x1,y1 = xy[0]+dx, xy[1]+dy
-                if 0 <= x1 <= self.width-1 and 0 <= y1 <= self.height-1:
+                if 0 <= x1 < self.width and 0 <= y1 < self.height:
                     yield x1,y1
         
+    def clearField(self):
+        """
+        Poczatkowe wypelnienie wszystkich pol na pusto (bez min).
+        """
+        self.field = dict()
+        for xy in self.allCells():
+                self.field[xy] = 'e'
+        
+    def layMines(self, spareX=None, spareY=None):
+        """
+        Rozklada miny na planszy unikajac wskazanego pola.
+        Zaklada, ze pole jest cale puste ('e').
+        """
+        for m in range(self.totalMines):
+            while True:
+                xy = int(random()*self.width), int(random()*self.height)
+                if xy == (spareX, spareY):
+                    continue
+                if self.field[xy] == 'M':
+                    continue
+                break
+            self.field[xy] = 'M'
+
     def numNeighbourMines(self,xy):
         """
         Funkcja wyznacza liczbe min na planszy dookola danego pola.
@@ -132,6 +131,8 @@ class Game(object):
         """
         Funkcja automatycznie odslania wszystkie pola sasiadujace z nowoodslonietymi polami wokol ktorych nie ma min.
         Odslanianie jest kontynuowane rekurencyjnie.
+        Jesli mozna odslonic pole z flaga, flaga jest usuwana.
+        '0' to tymczasowe oznaczenie pola, z ktorym nie sasiaduja zadne miny. Po zakonczeniu procesu takie pole bedzie oznaczone '.'.
         """
         again=True
         while again:
@@ -148,50 +149,46 @@ class Game(object):
         """
         Funkcja sprawdza czy spelniony jest warunek zwyciestwa i ew. ustawia status.
         """ 
-        if list(self.field.values()).count( 'Fe' ) == 0 and \
-           list(self.field.values()).count( 'e' ) == 0 and \
-           list(self.field.values()).count( 'M' ) == 0:
+        if self.status != 'started':
+            return
+        fieldValues = list(self.field.values())
+        if fieldValues.count( 'Fe' ) == 0 and \
+           fieldValues.count( 'e' ) == 0 and \
+           fieldValues.count( 'M' ) == 0:
             self.status = 'success'
     
-    def stepOnField(self,x,y):  #zbyt krotka nazwa? zbyt niedokladna? zbyt niejednoznaczna? # zabronionosc wg statusu
+    def stepOnField(self,x,y):
         """
         Odslania pole przy wstapieniu na nie.
         Jesli na polu znajduje sie mina, gra sie konczy przegrana.
-        Jesli odslonieto wszystko... gra sie konczy wygrana.  --- dorobic
+        Jesli odslonieto wszystkie pola poza minami, gra sie konczy wygrana.  
         Jesli mozna odslonic sasiednie pola, sa one rowniez odslaniane - rekurencyjnie.
+        Jesli gra dopiero sie zaczyna, pierwsze wejscie powodule rozlozenie min.
         Jesli gra jest zakonczona, metoda nie ma skutkow.
         """
         if self.status in ['fail', 'success']:
             return
-        xy = x,y
         if self.status == 'ready':
             self.status = 'started'
             self.layMines( x, y )
+        xy = x,y
         if self.field[xy] == 'M':
             self.field[xy] = 'B'
             self.status = 'fail'   
         else:
-            self.field[xy] = str(self.numNeighbourMines(xy))
-            self.exploreSafeFields()
+            numMines = str(self.numNeighbourMines(xy))
+            self.field[xy] = numMines
+            if numMines == '0':
+                self.exploreSafeFields()
         self.checkSuccess()
 
-    def toggleCellFlag(self,x,y):    
-        """
-        Zmienia stan oznaczenia pola flaga na przeciwny.
-        Jeeli gra jest zakonczona, metoda nie ma skutkow.    --- nie dziala tak obecnie, potrzebne?
-        """
-        xy = x,y
-        if self.field[xy][0] == 'F':
-            self.field[xy] = self.field[xy][1:]
-        else:
-            self.field[xy] = 'F' + self.field[xy]
-        self.checkSuccess()
-        
     def setFlag(self,x,y,state):
         """
-        Ustawia (state==True) na polu lub usuwa (state==False) flage z pola, jesli mozna to zrobic. Sprawdza warunek konca gry.
+        Ustawia (state==True) na polu lub usuwa (state==False) flage z pola, jesli mozna to zrobic i wtedy sprawdza warunek konca gry.
         W przeciwnym razie - brak skutkow.
         """
+        if self.status != 'started':
+            return
         xy = x,y
         if state:
             if self.field[xy] in ['e','M']:
@@ -204,12 +201,13 @@ class Game(object):
     
     def getMinesLeft(self):
         """
-        Pobiera liczbe nieoznaczonych min - wynikajaca z wypelnienia planszy i oznaczen flagami. 
+        Zwraca liczbe nieoznaczonych min - wynikajaca z wypelnienia planszy i oznaczen flagami. 
         Nie bada dopasowania flag do min - jesli gracz zle stawia flagi, to licznik i tak się zmniejsza.
         Jesli flag jest wiecej niz min, zwraca zero. 
         """
-        fl = list(self.field.values()).count( 'Fe' ) + list(self.field.values()).count( 'FM' )
-        return max( self.totalMines - fl, 0 )
+        fieldValues = list(self.field.values())
+        flags = fieldValues.count( 'Fe' ) + fieldValues.count( 'FM' )
+        return max( self.totalMines - flags, 0 )
 
     """
     def show(self, transform):
@@ -237,28 +235,3 @@ class Game(object):
         self.field.display()
     """
 
-class GameSet(object):
-    
-    def __init__(self):
-        self.games = dict()
-    
-    def startNewGame(self): # zwraca id gry 
-        id = int( random() * 9000 + 1000)
-        while( id in self.games ):
-            id = int( random() * 9000 + 1000)
-        new_game = Game()
-        self.games[id] = new_game
-        return id
-        
-    
-    def getGameList(self): # zwraca listę id gier
-        return list( self.games.keys())
-    
-    def getGameByID(self,id):  # zwraca obiekt gry
-        return self.games[id]
-
-    def deleteGame(self,id):  # usuwa gr
-        pass
-    
-    # KIEDY UTRWALAC GRE w BAZIE DANYCH???
-    

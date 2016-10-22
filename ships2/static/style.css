@@ -1,10 +1,11 @@
 .cell  { 
-	background-color: #b0b0b0;
+	background-color: #c0c0c0;
+	border: medium solid #c0c0c0;
 	width:60;
 	height:60;
 	text-align:center;
 	margin:5;
-	border: medium solid #b0b0b0;
+	border: medium solid #c0c0c0;
 }
 
 .elevated {

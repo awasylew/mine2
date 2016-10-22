@@ -5,11 +5,11 @@ from flask import redirect, url_for
 from flask import jsonify
 import os
 from game import Game
-from game import GameSet
+from gameset import GameSet
  
 app = Flask(__name__) 
 g = Game()
-gs = GameSet()
+gameset = GameSet()
 api_prefix = '/api/v1'
 
 @app.route('/')
@@ -17,11 +17,11 @@ def game_default():
     global g
     return render_template('game.html', game=g )
 
-@app.route('/ab/games/<int:game_id>')
-def ab_games_default( game_id ):
-    game = gs.getGameByID( game_id )
-    game_ids = gs.getGameList()
-    return render_template('game.html', game=game, game_url=url_for('ab_games_default', game_id=game_id), 
+@app.route('/ab/games/<gameID>')
+def ab_games_default( gameID ):
+    game = gameset.getGameByID( gameID )
+    game_ids = gameset.getGameList()
+    return render_template('game.html', game=game, game_url=url_for('ab_games_default', gameID=gameID), 
                            game_ids=game_ids, games_url='/ab/games' )
 
 @app.route( api_prefix + '/field')
@@ -30,6 +30,7 @@ def api_show_field():
     rsp = { 'width': g.width, 
            'height': g.height,
            'totalMines': g.totalMines,
+           'minesLeft': g.getMinesLeft(),
            'status': g.status,
            'field': g.fieldAsString(True) }
     return jsonify(rsp), 200                                        # dodac naglowki
@@ -42,32 +43,31 @@ def game_new():
 
 @app.route('/ab/games/new')
 def ab_new_game():
-    id = gs.startNewGame()
+    id = gameset.startNewGame()
     return 'id = ' + str(id)
 
 @app.route('/ab/games')
 def ab_games():
-    rsp = {'game_ids': gs.getGameList()}
+    rsp = {'game_ids': gameset.getGameList()}
     print( rsp )
-    return jsonify( rsp ), 200
+    return jsonify( rsp )
 
 @app.route('/step/<x>/<y>')
 def game_step(x,y):
     g.stepOnField(int(x),int(y)) # brak obslugi bledow
     return redirect( url_for('game_default'))
 
-@app.route('/ab/games/<int:game_id>/step/<x>/<y>')
-def ab_game_step( game_id, x, y ):
-    game = gs.getGameByID( game_id )
+@app.route('/ab/games/<gameID>/step/<x>/<y>')
+def ab_game_step( gameID, x, y ):
+    game = gameset.getGameByID( gameID )
     game.stepOnField(int(x),int(y)) # brak obslugi bledow
-#    return render_template( 'game.html', game=game, game_url=url_for('ab_games_default', game_id=game_id))
-    return redirect( url_for('ab_games_default', game_id=game_id ))
+    return redirect( url_for('ab_games_default', gameID=gameID ))
 
 @app.route( api_prefix + '/step', methods=['GET', 'POST'] )                                  # powinno byc tylko POST
 def api_step():
     try:                                                            # nie mozna tego kodu ladnie uwspolnic z flag?
-        x = int( request.args.get( 'x' ))
-        y = int( request.args.get( 'y' ))
+        x = int( request.argameset.get( 'x' ))
+        y = int( request.argameset.get( 'y' ))
         if not 0 <= x < g.width or not 0 <= y < g.height:
             raise 
     except:
@@ -75,12 +75,17 @@ def api_step():
     g.stepOnField( x, y )
     return api_show_field()
     
+@app.route('/flag/<x>/<y>/<state>')
+def game_flag(x,y,state):
+    g.setFlag( int(x), int(y), state.upper()=='TRUE' )  # brak obslugi bledow
+    return redirect( url_for('game_default'))
+
 @app.route( api_prefix + '/set_flag', methods=['GET', 'POST'] )                              # powinno byc tylko POST
 def api_set_flag():
     try:
-        x = int( request.args.get( 'x' ))
-        y = int( request.args.get( 'y' ))
-        t = request.args.get( 'state' ).upper()
+        x = int( request.argameset.get( 'x' ))
+        y = int( request.argameset.get( 'y' ))
+        t = request.argameset.get( 'state' ).upper()
         if not 0 <= x < g.width or not 0 <= y < g.height or not t in ['TRUE', 'FALSE']:
             raise 
     except:
@@ -88,17 +93,11 @@ def api_set_flag():
     g.setFlag( x, y, t=='TRUE' )
     return api_show_field()
     
-@app.route('/flag/<x>/<y>/<state>')
-def game_flag(x,y,state):
-    g.setFlag( int(x), int(y), state.upper()=='TRUE' )  # brak obslugi bledow
-    return redirect( url_for('game_default'))
-
-@app.route('/ab/games/<int:game_id>/flag/<x>/<y>/<state>')
-def ab_game_flag( game_id, x, y, state ):
-    game = gs.getGameByID( game_id )
+@app.route('/ab/games/<gameID>/flag/<x>/<y>/<state>')
+def ab_game_flag( gameID, x, y, state ):
+    game = gameset.getGameByID( gameID )
     game.setFlag( int(x), int(y), state.upper()=='TRUE' ) # brak obslugi bledow
-#    return render_template( 'game.html', game=game, game_url=url_for('ab_games_default', game_id=game_id))
-    return redirect( url_for('ab_games_default', game_id=game_id ))
+    return redirect( url_for('ab_games_default', gameID=gameID ))
 
 @app.route('/quit_server')
 def quit_server():
@@ -106,12 +105,8 @@ def quit_server():
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
-    return "Quitting server... <br/> <a href='/new_game'>restart</a>"
+    return "Quitting server..."
    
-# try:
 if __name__ == '__main__':
     port = int(os.getenv("PORT"))
     app.run(host='0.0.0.0', port=port) 
-#    app.run()
-#except:
-#    pass
