@@ -1,3 +1,5 @@
+{# skrocic plik wynikowy bez pogarszania czytelnosci zrodlowego #}
+
 <html>
 
 <head>
@@ -7,69 +9,76 @@
 
 <body>
 
-<div><a href='/new_game'>Start new game</a></div>
+{# <div><a href='/new_game'>Start new game</a></div> #}
 
-<div>status: {{ game.status }} </div>
+{% if game != None %}
 
-<div>total mines: {{ game.totalMines }} </div> 
-
-<div>mines left: {{ game.getMinesLeft() }} </div> 
-
-{% set status = game.status %}
-
-<table>
-{% for y in range(game.height) %}
-
-	<tr>
-	{% for x in range(game.width) %}
+	<div>status: {{ game.status }} </div>
 	
-		{% set f = game.field[ x,y ] %}   
-		<td class='cell{% if f in ['e', 'FM'] or game.status != 'fail' and f in ['M', 'Fe', 'FM'] %} elevated{% endif %}{% if f =='B' %} boom{% endif %}'>
-
-			{% if f in ['1', '2', '3', '4', '5', '6', '7', '8', '9'] %}
-				<p class='minecount{{ f }}'>{{ f }}</p>
-			{% endif %}
-
-			{% if status == 'fail' and f in ['M', 'B'] %}
-				<img src='{{ url_for('static', filename='mina.png') }}'/>
-			{% endif %}
-
-			{% if status == 'fail' and f == 'FM' %}
-				<img src='{{ url_for('static', filename='flaga.png') }}'/>
-			{% endif %}
-
-			{% if status == 'fail' and f == 'Fe' %}
-				<img src='{{ url_for('static', filename='minax.png') }}'/>
-			{% endif %}
-
-			{% if status == 'success' and f == 'FM' %}
-				<img src='{{ url_for('static', filename='flaga.png') }}'/>
-			{% endif %}
-
-			{% if status == 'started' and f in ['e', 'M'] %}
-				<a href='{{ game_url }}/flag/{{ x }}/{{ y }}/true'><img class='actions flaga' src='{{ url_for('static', filename='flaga.png') }}'/></a>
-			{% endif %}
-
-			{% if status == 'started' and f in ['Fe', 'FM'] %}
-				<a href='{{ game_url }}/flag/{{ x }}/{{ y }}/false'><img class='actionV' src='{{ url_for('static', filename='flaga.png') }}'/></a>
-			{% endif %}
-
-			{% if status in ['ready','started'] and f in ['e', 'M'] %}
-				<a href='{{ game_url }}/step/{{ x }}/{{ y }}'><img class='actions stopy' src='{{ url_for('static', filename='stopy.png') }}'/></a>
-			{% endif %}
-		</td>
+	<div>total mines: {{ game.totalMines }} </div> 
+	
+	<div>mines left: {{ game.getMinesLeft() }} </div> 
+	
+	{% set status = game.status %}
+	
+	<table>
+	{% for y in range(game.height) %}
+	
+		<tr>
+		{% for x in range(game.width) %}
+		
+			{% set f = game.field[ x,y ] %}   
+			<td class='cell{% if f in ['e', 'FM'] or game.status != 'fail' and f in ['M', 'Fe', 'FM'] %} elevated{% endif %}{% if f =='B' %} boom{% endif %}'>
+	
+				{% if f in ['1', '2', '3', '4', '5', '6', '7', '8', '9'] %}
+					<p class='minecount{{ f }}'>{{ f }}</p>
+				{% endif %}
+	
+				{% if status == 'fail' and f in ['M', 'B'] %}
+					<img src='{{ url_for('static', filename='mina.png') }}'/>
+				{% endif %}
+	
+				{% if status == 'fail' and f == 'FM' %}
+					<img src='{{ url_for('static', filename='flaga.png') }}'/>
+				{% endif %}
+	
+				{% if status == 'fail' and f == 'Fe' %}
+					<img src='{{ url_for('static', filename='minax.png') }}'/>
+				{% endif %}
+	
+				{% if status == 'success' and f == 'FM' %}
+					<img src='{{ url_for('static', filename='flaga.png') }}'/>
+				{% endif %}
+	
+				{% if status == 'started' and f in ['e', 'M'] %}
+					<a href='{{ game_url }}/flag/{{ x }}/{{ y }}/true'><img class='actions flaga' src='{{ url_for('static', filename='flaga.png') }}'/></a>
+				{% endif %}
+	
+				{% if status == 'started' and f in ['Fe', 'FM'] %}
+					<a href='{{ game_url }}/flag/{{ x }}/{{ y }}/false'><img class='actionV' src='{{ url_for('static', filename='flaga.png') }}'/></a>
+				{% endif %}
+	
+				{% if status in ['ready','started'] and f in ['e', 'M'] %}
+					<a href='{{ game_url }}/step/{{ x }}/{{ y }}'><img class='actions stopy' src='{{ url_for('static', filename='stopy.png') }}'/></a>
+				{% endif %}
+			</td>
+		{% endfor %}
+		</tr>
 	{% endfor %}
-	</tr>
-{% endfor %}
-</table>
+	</table>
+	<br/>
 
-<div><a href='/quit_server'>Quit server</a></div>
-
+{% endif %}
+	
+<div><a href='/ab/games'>Current games:</a></div>
 {% for game_id in game_ids %}
 	<div><a href='{{ games_url }}/{{game_id}}'>{{ game_id }}</a></div>
 {% endfor %}
 
-<div><a href='/ab/games/new'>new game in set</a></div>
+<div><a href='/ab/games/new'>new game</a></div>
+<br/>
+
+<div><a href='/quit_server'>Quit server</a></div>
 
 </body>
 </html>

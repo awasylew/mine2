@@ -4,100 +4,109 @@ from flask import request
 from flask import redirect, url_for
 from flask import jsonify
 import os
-from game import Game
+# from game import Game
 from gameset import GameSet
  
 app = Flask(__name__) 
-g = Game()
 gameset = GameSet()
-api_prefix = '/api/v1'
+apiPrefix = '/api/v1'
+apiPrefixBare = '/api'
+webPrefix = '/ab'
 
-@app.route('/')
-def game_default():
-    global g
-    return render_template('game.html', game=g )
+@app.route( '/' )
+@app.route( webPrefix )
+def webRoot():
+    return redirect( url_for('webGamesDefault'))
 
-@app.route('/ab/games/<gameID>')
-def ab_games_default( gameID ):
-    game = gameset.getGameByID( gameID )
+@app.route( apiPrefix )
+@app.route( apiPrefixBare )
+def apiRoot():
+    return render_template( 'api.html' )
+
+@app.route( webPrefix + '/games')                      # tylko lista gier
+@app.route( webPrefix + '/games/<gameID>')             # biezaca gra + lista gier
+def webGamesDefault( gameID=None ):
+    if gameID != None:
+        currentGame = gameset.getGameByID( gameID )
+    else:
+        currentGame = None
     game_ids = gameset.getGameList()
-    return render_template('game.html', game=game, game_url=url_for('ab_games_default', gameID=gameID), 
-                           game_ids=game_ids, games_url='/ab/games' )
+    return render_template('game.html', game=currentGame, game_url=url_for('webGamesDefault', gameID=gameID), 
+                           game_ids=game_ids, games_url=webPrefix+'/games' )                                   # snake_case -> cameCase
 
-@app.route( api_prefix + '/field')
-def api_show_field():
-    global g
-    rsp = { 'width': g.width, 
-           'height': g.height,
-           'totalMines': g.totalMines,
-           'minesLeft': g.getMinesLeft(),
-           'status': g.status,
-           'field': g.fieldAsString(True) }
-    return jsonify(rsp), 200                                        # dodac naglowki
-
-@app.route('/new_game')
-def game_new():
-    global g
-    g = Game()
-    return redirect( url_for('game_default'))
-
-@app.route('/ab/games/new')
-def ab_new_game():
-    id = gameset.startNewGame()
-    return 'id = ' + str(id)
-
-@app.route('/ab/games')
-def ab_games():
+@app.route( apiPrefix + '/games')
+def apiGames():
     rsp = {'game_ids': gameset.getGameList()}
     print( rsp )
     return jsonify( rsp )
 
-@app.route('/step/<x>/<y>')
-def game_step(x,y):
-    g.stepOnField(int(x),int(y)) # brak obslugi bledow
-    return redirect( url_for('game_default'))
+@app.route( apiPrefix + '/games2')
+def apiGames2():
+#    rsp = {'games': list(map(lambda gameID: apiPrefix+'/games/'+gameID, gameset.getGameList())) }
+    rsp = {'games': list(map(lambda gameID: url_for('apiShowField', gameID=gameID, _external=True), gameset.getGameList())) }
+    print( rsp )
+    return jsonify( rsp )
 
-@app.route('/ab/games/<gameID>/step/<x>/<y>')
-def ab_game_step( gameID, x, y ):
+@app.route( apiPrefix + '/games/<gameID>')
+def apiShowField( gameID ):                                         # nazwa?
+    game = gameset.getGameByID( gameID )                            # obsluga bledu id
+    rsp = { 'width': game.width, 
+           'height': game.height,
+           'totalMines': game.totalMines,
+           'minesLeft': game.getMinesLeft(),
+           'status': game.status,
+           'field': game.fieldAsString(True) }
+    return jsonify(rsp)                                             # dodac naglowki
+
+@app.route( webPrefix + '/games/new' )                                         # w wersji API POST zamiast /new 
+def webNewGame():
+    gameID = gameset.startNewGame()
+#    return 'id = ' + str(id)
+    return redirect( url_for('webGamesDefault', gameID=gameID ))
+
+@app.route( apiPrefix+'/games', methods=['POST'])
+def apiNewGame():
+    gameID = gameset.startNewGame()
+    return 'id = ' + str(gameID)
+
+@app.route( webPrefix + '/<gameID>/flag/<x>/<y>/<state>' )
+def webFlag( gameID, x, y, state ):
     game = gameset.getGameByID( gameID )
-    game.stepOnField(int(x),int(y)) # brak obslugi bledow
-    return redirect( url_for('ab_games_default', gameID=gameID ))
+    game.setFlag( int(x), int(y), state.upper()=='TRUE' )               # brak obslugi bledow
+    return redirect( url_for('webGamesDefault', gameID=gameID ))
 
-@app.route( api_prefix + '/step', methods=['GET', 'POST'] )                                  # powinno byc tylko POST
-def api_step():
+@app.route( apiPrefix + '/games/<gameID>/flag', methods=['GET', 'POST'])                    # powinno byc tylko POST
+def apiFlag( gameID ):
     try:                                                            # nie mozna tego kodu ladnie uwspolnic z flag?
-        x = int( request.argameset.get( 'x' ))
-        y = int( request.argameset.get( 'y' ))
-        if not 0 <= x < g.width or not 0 <= y < g.height:
+        game = gameset.getGameByID( gameID )            # obsluga bledu id
+        x = int( request.args.get( 'x' ))
+        y = int( request.args.get( 'y' ))
+        s = request.args.get( 'state' ).upper()
+        if not 0 <= x < game.width or not 0 <= y < game.height or not s in ['TRUE', 'FALSE']:
+            raise 
+    except:
+        return 'Expecting params 0,0 <= x,y < width,height, state==false|true', 400        # dodac naglowki
+    game.setFlag( x, y, s=='TRUE' )
+    return apiShowField( gameID )
+    
+@app.route( webPrefix + '/games/<gameID>/step/<x>/<y>' )
+def webStep( gameID, x, y ):
+    game = gameset.getGameByID( gameID )
+    game.stepOnField(int(x),int(y))                                     # brak obslugi bledow
+    return redirect( url_for('webGamesDefault', gameID=gameID ))
+
+@app.route( apiPrefix + '/games/<gameID>/step', methods=['GET', 'POST'] )                   # powinno byc tylko POST
+def apiStep( gameID ):
+    try:                                                            # nie mozna tego kodu ladnie uwspolnic z flag?
+        game = gameset.getGameByID( gameID )            # obsluga bledu id
+        x = int( request.args.get( 'x' ))
+        y = int( request.args.get( 'y' ))
+        if not 0 <= x < game.width or not 0 <= y < game.height:
             raise 
     except:
         return 'Expecting params 0,0 <= x,y < width,height', 400        # dodac naglowki
-    g.stepOnField( x, y )
-    return api_show_field()
-    
-@app.route('/flag/<x>/<y>/<state>')
-def game_flag(x,y,state):
-    g.setFlag( int(x), int(y), state.upper()=='TRUE' )  # brak obslugi bledow
-    return redirect( url_for('game_default'))
-
-@app.route( api_prefix + '/set_flag', methods=['GET', 'POST'] )                              # powinno byc tylko POST
-def api_set_flag():
-    try:
-        x = int( request.argameset.get( 'x' ))
-        y = int( request.argameset.get( 'y' ))
-        t = request.argameset.get( 'state' ).upper()
-        if not 0 <= x < g.width or not 0 <= y < g.height or not t in ['TRUE', 'FALSE']:
-            raise 
-    except:
-        return 'Expecting params 0,0 <= x,y < width,height, state==false|true', 400
-    g.setFlag( x, y, t=='TRUE' )
-    return api_show_field()
-    
-@app.route('/ab/games/<gameID>/flag/<x>/<y>/<state>')
-def ab_game_flag( gameID, x, y, state ):
-    game = gameset.getGameByID( gameID )
-    game.setFlag( int(x), int(y), state.upper()=='TRUE' ) # brak obslugi bledow
-    return redirect( url_for('ab_games_default', gameID=gameID ))
+    game.stepOnField( x, y )
+    return apiShowField( gameID )
 
 @app.route('/quit_server')
 def quit_server():
